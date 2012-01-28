@@ -1,0 +1,27 @@
+name:          netcdf
+version:       0.1.0.0
+synopsis:      NetCDF reader/writer
+homepage:      http://github.com/jystic/netcdf-hs
+license:       BSD3
+license-file:  LICENSE
+author:        Jacob Stanley
+maintainer:    Jacob Stanley <jacob@stanley.io>
+category:      Codec
+build-type:    Simple
+cabal-version: >= 1.6
+
+
+executable netcdf-test
+  main-is: Main.hs
+  hs-source-dirs: src
+
+  build-depends:
+      base               == 4.*
+    , array              == 0.3.*
+    , attoparsec         == 0.10.*
+    , attoparsec-binary  == 0.1.*
+    , attoparsec-conduit == 0.0.*
+    , bytestring         == 0.9.*
+    , conduit            == 0.1.*
+    , transformers       == 0.2.*
+    , pretty-show
