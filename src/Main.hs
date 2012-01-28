@@ -42,13 +42,13 @@ type Name = ByteString
 data Dim = Dim Name DimSize
   deriving (Show)
 
-data DimSize = Fixed Int | Unlimited
+data DimSize = Fixed Word32 | Unlimited
   deriving (Show)
 
 data Var = Var Name [Dim] [Attr] NCType VarSize VarBegin
   deriving (Show)
 
-type VarSize  = Int32
+type VarSize  = Word32
 type VarBegin = Offset
 
 data Attr = AttrByte   Name ByteString
@@ -66,10 +66,10 @@ netcdf :: Parser NetCDF
 netcdf = do
     string "CDF"
 
-    version <- word8 1 *> pure Classic
-           <|> word8 2 *> pure Offset64
+    version <- pure Classic  <* word8 1
+           <|> pure Offset64 <* word8 2
 
-    numrecs <- word32be 0xFFFFFFFF *> pure Streaming
+    numrecs <- pure Streaming <* word32be 0xFFFFFFFF
            <|> NumRecs <$> anyWord32be
 
     dims  <- dimensionList
@@ -101,21 +101,18 @@ dimension :: Parser Dim
 dimension = Dim <$> name <*> dimensionSize
 
 dimensionSize :: Parser DimSize
-dimensionSize = do
-    n <- nonNeg
-    case n of
-      0 -> pure Unlimited
-      _ -> pure (Fixed n)
+dimensionSize = pure Unlimited <* word32be 0
+            <|> Fixed <$> anyWord32be
 
 variable :: [Dim] -> Parser Offset -> Parser Var
 variable dims offsetP = Var
-       <$> name
-       <*> list ((dims !!) <$> nonNeg)
-       <*> attributeList
-       <*> nctype
-       <*> anyInt32be
-       <*> offsetP
-       <?> "variable"
+                    <$> name
+                    <*> list ((dims !!) <$> nonNeg)
+                    <*> attributeList
+                    <*> nctype
+                    <*> anyWord32be
+                    <*> offsetP
+                    <?> "variable"
 
 attribute :: Parser Attr
 attribute = do
