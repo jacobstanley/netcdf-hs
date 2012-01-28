@@ -21,8 +21,8 @@ header :: Parser Header
 header = do
     string "CDF"
 
-    format <- pure Classic  <* word8 1
-          <|> pure Offset64 <* word8 2
+    format <- pure FormatClassic <* word8 1
+          <|> pure Format64Bit   <* word8 2
 
     numrecs <- pure Streaming <* word32be 0xFFFFFFFF
            <|> NumRecs <$> anyWord32be
@@ -35,8 +35,8 @@ header = do
 
 -- | Create a parser for file offsets depending on the file format.
 offsetParser :: Format -> Parser Offset
-offsetParser Classic  = fromIntegral <$> anyWord32be
-offsetParser Offset64 = anyWord64be
+offsetParser FormatClassic  = fromIntegral <$> anyWord32be
+offsetParser Format64Bit = anyWord64be
 
 dimensionList :: Parser [Dim]
 dimensionList = headerList 0xA dimension <?> "dimensions"

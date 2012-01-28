@@ -12,8 +12,8 @@ data Header = Header Format NumRecs [Dim] [Attr] [Var]
   deriving (Show)
 
 -- | The format of a NetCDF file.
-data Format = Classic  -- ^ classic format
-            | Offset64 -- ^ 64-bit offset format
+data Format = FormatClassic -- ^ file offsets are 32-bit
+            | Format64Bit   -- ^ file offsets are 64-bit
   deriving (Show)
 
 type Offset = Word64
