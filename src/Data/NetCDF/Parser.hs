@@ -34,7 +34,7 @@ header = do
     return (Header format numrecs dims gatts vars)
 
 -- | Create a parser for file offsets depending on the file format.
-offsetParser :: Format -> Parser Offset
+offsetParser :: Format -> Parser FileOffset
 offsetParser FormatClassic  = fromIntegral <$> anyWord32be
 offsetParser Format64Bit = anyWord64be
 
@@ -44,7 +44,7 @@ dimensionList = headerList 0xA dimension <?> "dimensions"
 attributeList :: Parser [Attr]
 attributeList = headerList 0xC attribute <?> "attributes"
 
-variableList  :: [Dim] -> Parser Offset -> Parser [Var]
+variableList  :: [Dim] -> Parser FileOffset -> Parser [Var]
 variableList dims offsetP = headerList 0xB (variable dims offsetP) <?> "variables"
 
 headerList :: Word32 -> Parser a -> Parser [a]
@@ -53,6 +53,10 @@ headerList tag pelem = absent <|> word32be tag *> list pelem
     absent = zero *> zero *> pure []
     zero   = word32be 0
 
+name :: Parser Name
+name = alignedBytes <?> "name"
+
+
 dimension :: Parser Dim
 dimension = Dim <$> name <*> dimensionLength
 
@@ -60,44 +64,45 @@ dimensionLength :: Parser DimLength
 dimensionLength = pure Unlimited <* word32be 0
               <|> Fixed <$> anyWord32be
 
-variable :: [Dim] -> Parser Offset -> Parser Var
-variable dims offsetP = Var
-                    <$> name
-                    <*> list ((dims !!) <$> nonNeg)
-                    <*> attributeList
-                    <*> nctype
-                    <*> anyWord32be
-                    <*> offsetP
-                    <?> "variable"
 
 attribute :: Parser Attr
-attribute = do
-    nam <- name
-    typ <- nctype
+attribute = Attr <$> name <*> attributeValue <?> "attribute"
+
+attributeValue :: Parser AttrValue
+attributeValue = do
+    typ <- variableType
     case typ of
-      NCByte   -> AttrByte   nam <$> alignedBytes
-      NCChar   -> AttrChar   nam <$> alignedBytes
-      NCShort  -> AttrShort  nam <$> alignedShorts
-      NCInt    -> AttrInt    nam <$> list anyInt32be
-      NCFloat  -> AttrFloat  nam <$> list anyFloat32be
-      NCDouble -> AttrDouble nam <$> list anyFloat64be
-    <?> "attribute"
+      VarByte   -> AttrByte   <$> alignedBytes
+      VarChar   -> AttrChar   <$> alignedBytes
+      VarShort  -> AttrShort  <$> alignedShorts
+      VarInt    -> AttrInt    <$> list anyInt32be
+      VarFloat  -> AttrFloat  <$> list anyFloat32be
+      VarDouble -> AttrDouble <$> list anyFloat64be
 
-name :: Parser Name
-name = alignedBytes <?> "name"
 
-nctype :: Parser NCType
-nctype = do
+variable :: [Dim] -> Parser FileOffset -> Parser Var
+variable dims offsetP =
+    Var <$> name
+        <*> list ((dims !!) <$> nonNeg)
+        <*> attributeList
+        <*> variableType
+        <*> anyWord32be
+        <*> offsetP
+        <?> "variable"
+
+variableType :: Parser VarType
+variableType = do
     typ <- anyWord32be
     case typ of
-      1 -> pure NCByte
-      2 -> pure NCChar
-      3 -> pure NCShort
-      4 -> pure NCInt
-      5 -> pure NCFloat
-      6 -> pure NCDouble
+      1 -> pure VarByte
+      2 -> pure VarChar
+      3 -> pure VarShort
+      4 -> pure VarInt
+      5 -> pure VarFloat
+      6 -> pure VarDouble
       _ -> fail ("unsupported nc_type = " ++ show typ)
-    <?> "type"
+    <?> "variableType"
+
 
 ------------------------------------------------------------------------
 -- Utils
