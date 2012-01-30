@@ -25,19 +25,19 @@ data Header = Header {
   -- | A list of the variables stored in the file.
   , hdrVars    :: [Var]
 
-  } deriving (Show)
+  } deriving (Eq, Show)
 
 -- | The format of a NetCDF file.
 data Format =
     FormatClassic -- ^ File offsets are 32-bit.
   | Format64Bit   -- ^ File offsets are 64-bit.
-  deriving (Show)
+  deriving (Eq, Show)
 
 -- | The current number of records stored in the unlimited dimension.
 data NumRecs =
     Streaming      -- ^ The record count is unknown.
   | NumRecs Word32 -- ^ The number of records in the file.
-  deriving (Show)
+  deriving (Eq, Show)
 
 -- | A dimension, attribute or variable name stored in UTF-8.
 type Name = ByteString
@@ -50,7 +50,7 @@ type Name = ByteString
 data Dim = Dim
   { dimName   :: Name
   , dimLength :: DimLength
-  } deriving (Show)
+  } deriving (Eq, Show)
 
 -- | The length of a dimension. There can be at most one unlimited
 -- dimension. The unlimited dimension is also known as the record
@@ -58,7 +58,7 @@ data Dim = Dim
 data DimLength =
     Fixed Word32 -- ^ The dimension has a fixed number of values.
   | Unlimited    -- ^ The dimension has an unlimited number of values.
-  deriving (Show)
+  deriving (Eq, Show)
 
 
 ------------------------------------------------------------------------
@@ -68,7 +68,7 @@ data DimLength =
 data Attr = Attr {
     attrName  :: Name
   , attrValue :: AttrValue
-  } deriving (Show)
+  } deriving (Eq, Show)
 
 -- | The value of an attribute.
 data AttrValue =
@@ -78,7 +78,7 @@ data AttrValue =
   | AttrInt    [Int32]
   | AttrFloat  [Float]
   | AttrDouble [Double]
-  deriving (Show)
+  deriving (Eq, Show)
 
 
 ------------------------------------------------------------------------
@@ -113,7 +113,7 @@ data Var = Var {
   -- this variable begins.
   , varBegin :: FileOffset
 
-  } deriving (Show)
+  } deriving (Eq, Show)
 
 -- | An offset in to the NetCDF file.
 type FileOffset = Word64
@@ -126,4 +126,4 @@ data VarType =
   | VarInt    -- ^ 32-bit signed integer, big endian, two's complement.
   | VarFloat  -- ^ 32-bit IEEE single precision, big endian.
   | VarDouble -- ^ 64-bit IEEE double precision, big endian.
-  deriving (Show)
+  deriving (Eq, Show)
