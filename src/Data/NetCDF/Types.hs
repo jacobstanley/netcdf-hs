@@ -111,7 +111,7 @@ data Var = Var {
 
   -- | The offset from the start of the file at which the first value of
   -- this variable begins.
-  , varBegin :: FileOffset
+  , varOffset :: FileOffset
 
   } deriving (Eq, Show)
 
