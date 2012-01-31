@@ -124,7 +124,7 @@ alignedShorts = do
 align :: Int -> Parser ()
 align bytesRead = take padding *> pure () <?> "align"
   where
-    boundary = (bytesRead + 3) .&. complement 0x03
+    boundary = (bytesRead + 3) .&. complement 0x3
     padding  = boundary - bytesRead
 
 list :: Parser a -> Parser [a]

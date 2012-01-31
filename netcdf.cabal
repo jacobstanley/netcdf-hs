@@ -23,5 +23,6 @@ executable netcdf-test
     , attoparsec-conduit == 0.0.*
     , bytestring         == 0.9.*
     , conduit            == 0.1.*
+    , data-layout        == 0.1.*
     , transformers       == 0.2.*
-    , pretty-show
+    , vector             == 0.9.*
