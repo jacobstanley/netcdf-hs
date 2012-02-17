@@ -7,7 +7,7 @@ import           Data.ByteString (ByteString)
 import qualified Data.ByteString as B
 import qualified Data.ByteString.Char8 as BC
 import           Data.Conduit (($$), runResourceT)
-import           Data.Conduit.Attoparsec (sinkParser)
+import           Data.Conduit.Cereal (sinkGet)
 import           Data.Conduit.Binary (sourceFile)
 import           Data.Layout
 import           Data.List hiding (repeat, group)
@@ -15,7 +15,7 @@ import qualified Data.Vector.Storable as V
 import           Prelude hiding (repeat)
 import           System.IO (IOMode(..), SeekMode(..), openFile, hSeek, hClose)
 
-import           Data.NetCDF.Parser (header)
+import           Data.NetCDF.Serialize (getHeader)
 import           Data.NetCDF.Types
 
 ------------------------------------------------------------------------
@@ -100,4 +100,4 @@ parseHeader :: FilePath -> IO Header
 parseHeader path = runResourceT (file $$ parser)
   where
     file   = sourceFile path
-    parser = sinkParser header
+    parser = sinkGet getHeader

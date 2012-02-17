@@ -16,13 +16,12 @@ executable netcdf-test
   hs-source-dirs: src
 
   build-depends:
-      base               == 4.*
-    , array              == 0.3.*
-    , attoparsec         == 0.10.*
-    , attoparsec-binary  == 0.1.*
-    , attoparsec-conduit == 0.0.*
-    , bytestring         == 0.9.*
-    , conduit            == 0.1.*
-    , data-layout        == 0.1.*
-    , transformers       == 0.2.*
-    , vector             == 0.9.*
+      base           == 4.*
+    , array          == 0.3.*
+    , bytestring     == 0.9.*
+    , cereal         == 0.3.*
+    , cereal-conduit == 0.0.*
+    , conduit        == 0.2.*
+    , data-layout    == 0.1.*
+    , transformers   == 0.2.*
+    , vector         == 0.9.*
