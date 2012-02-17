@@ -11,17 +11,14 @@ build-type:    Simple
 cabal-version: >= 1.6
 
 
-executable netcdf-test
-  main-is: Main.hs
+library
   hs-source-dirs: src
+
+  exposed-modules:
+    Data.NetCDF.Serialize
+    Data.NetCDF.Types
 
   build-depends:
       base           == 4.*
-    , array          == 0.3.*
     , bytestring     == 0.9.*
     , cereal         == 0.3.*
-    , cereal-conduit == 0.0.*
-    , conduit        == 0.2.*
-    , data-layout    == 0.1.*
-    , transformers   == 0.2.*
-    , vector         == 0.9.*
