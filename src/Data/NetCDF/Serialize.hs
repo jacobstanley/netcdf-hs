@@ -13,7 +13,6 @@ import           Prelude hiding (take, drop)
 
 import           Data.NetCDF.Types
 
-
 ------------------------------------------------------------------------
 
 -- | Parse the header of a NetCDF file.
@@ -37,7 +36,7 @@ getHeader = do
 -- | Create a parser for file offsets depending on the file format.
 getOffsetFor :: Format -> Get FileOffset
 getOffsetFor FormatClassic = fromIntegral <$> getWord32be
-getOffsetFor Format64Bit   = getWord64be
+getOffsetFor Format64Bit   = fromIntegral <$> getWord64be
 
 getDimensionList :: Get [Dim]
 getDimensionList = headerList 0xA getDimension <?> "dimensions"

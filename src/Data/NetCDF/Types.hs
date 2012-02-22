@@ -1,7 +1,7 @@
 module Data.NetCDF.Types where
 
 import Data.ByteString (ByteString)
-import Data.Word (Word32, Word64)
+import Data.Word (Word32)
 import Data.Int (Int16, Int32)
 
 ------------------------------------------------------------------------
@@ -116,7 +116,7 @@ data Var = Var {
   } deriving (Eq, Show)
 
 -- | An offset in to the NetCDF file.
-type FileOffset = Word64
+type FileOffset = Integer
 
 -- | The type of a variable.
 data VarType =
